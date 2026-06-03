@@ -13,7 +13,6 @@ import DocumentVault from "./pages/DocumentVault";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import Analytics from "./pages/Analytics";
 import AdminSettings from "./pages/AdminSettings";
-import PromptLab from "./pages/PromptLab";
 import UserManagement from "./pages/UserManagement";
 import UserProfile from "./pages/UserProfile";
 import Auth from "./pages/Auth";
@@ -48,7 +47,6 @@ const App = () => (
               <Route path="/knowledge" element={<ProtectedLayout><KnowledgeBase /></ProtectedLayout>} />
               <Route path="/analytics" element={<ProtectedLayout><Analytics /></ProtectedLayout>} />
               <Route path="/settings" element={<ProtectedLayout><AdminSettings /></ProtectedLayout>} />
-              <Route path="/prompt-lab" element={<ProtectedLayout><PromptLab /></ProtectedLayout>} />
               <Route path="/users" element={<ProtectedLayout><UserManagement /></ProtectedLayout>} />
               <Route path="/profile" element={<ProtectedLayout><UserProfile /></ProtectedLayout>} />
               <Route path="*" element={<NotFound />} />

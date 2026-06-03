@@ -5,7 +5,6 @@ import {
   Database,
   BarChart3,
   Settings,
-  FlaskConical,
   Users,
   LogOut,
   Cpu,
@@ -38,7 +37,6 @@ const mainNav = [
 
 const adminNav = [
   { title: "Налаштування", url: "/settings", icon: Settings },
-  { title: "Prompt Lab", url: "/prompt-lab", icon: FlaskConical },
 ];
 
 export function AppSidebar() {
