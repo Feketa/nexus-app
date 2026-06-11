@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
-import { Upload, FileText, Trash2, CheckCircle2, Clock, AlertCircle, Download, Filter, RefreshCw } from "lucide-react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { Upload, FileText, Trash2, CheckCircle2, Clock, AlertCircle, Download, Filter, RefreshCw, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +36,8 @@ export default function DocumentVault() {
   const [loading, setLoading] = useState(true);
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [search, setSearch] = useState("");
+  const filesRef = useRef(files);
 
   const fetchDocuments = async () => {
     const { data, error } = await supabase
@@ -45,19 +47,19 @@ export default function DocumentVault() {
       .order("created_at", { ascending: false });
 
     if (error) { toast.error("Помилка завантаження документів"); return; }
-    setFiles(
-      (data || []).map((d) => ({
-        id: d.id,
-        name: d.name,
-        size: formatSize(d.file_size),
-        file_path: d.file_path,
-        file_type: d.file_type,
-        status: d.status as "indexed" | "processing" | "error",
-        chunks: d.chunks,
-        created_at: new Date(d.created_at).toLocaleDateString("uk-UA"),
-        user_id: d.user_id,
-      }))
-    );
+    const mapped = (data || []).map((d) => ({
+      id: d.id,
+      name: d.name,
+      size: formatSize(d.file_size),
+      file_path: d.file_path,
+      file_type: d.file_type,
+      status: d.status as "indexed" | "processing" | "error",
+      chunks: d.chunks,
+      created_at: new Date(d.created_at).toLocaleDateString("uk-UA"),
+      user_id: d.user_id,
+    }));
+    filesRef.current = mapped;
+    setFiles(mapped);
     setLoading(false);
   };
 
@@ -65,16 +67,12 @@ export default function DocumentVault() {
     if (!user) return;
 
     fetchDocuments();
-    // Poll every 4 seconds while any document is processing
-    const interval = setInterval(async () => {
-      const { data } = await supabase
-        .from("documents")
-        .select("id,status")
-        .eq("status", "processing");
-      if (data && data.length > 0) {
+    // Poll every 3 seconds while any local document is still processing
+    const interval = setInterval(() => {
+      if (filesRef.current.some((f) => f.status === "processing")) {
         fetchDocuments();
       }
-    }, 4000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [user]);
 
@@ -193,6 +191,9 @@ export default function DocumentVault() {
     if (error) toast.error(`Помилка переіндексації: ${error.message}`);
   };
 
+  const filteredFiles = search.trim()
+    ? files.filter((f) => f.name.toLowerCase().includes(search.toLowerCase()))
+    : files;
   const totalChunks = files.reduce((a, f) => a + f.chunks, 0);
   const indexedCount = files.filter((f) => f.status === "indexed").length;
 
@@ -251,11 +252,18 @@ export default function DocumentVault() {
 
       {/* Files Table */}
       <div className="glass-card rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
-          <h3 className="font-semibold text-sm">Завантажені документи</h3>
-          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-            <Filter className="w-3.5 h-3.5" /> Фільтр
-          </button>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border/40 gap-4">
+          <h3 className="font-semibold text-sm whitespace-nowrap">Завантажені документи</h3>
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Пошук документів..."
+              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg bg-muted/30 border border-border/40 focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/40 transition-colors"
+            />
+          </div>
         </div>
         {loading ? (
           <div className="flex items-center justify-center py-16">
@@ -278,7 +286,13 @@ export default function DocumentVault() {
                 </tr>
               </thead>
               <tbody>
-                {files.map((f) => {
+                {filteredFiles.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-5 py-10 text-center text-sm text-muted-foreground">
+                      Нічого не знайдено
+                    </td>
+                  </tr>
+                ) : filteredFiles.map((f) => {
                   const sc = statusConfig[f.status];
                   return (
                     <tr key={f.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">

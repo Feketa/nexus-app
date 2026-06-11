@@ -71,15 +71,12 @@ serve(async (req) => {
       });
     }
 
+    // Storage deletion is best-effort — a missing file must not block DB cleanup.
     const { error: storageError } = await service.storage
       .from("documents")
       .remove([doc.file_path]);
-
     if (storageError) {
-      return new Response(JSON.stringify({ error: `Storage delete failed: ${storageError.message}` }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      console.warn(`Storage delete warning for ${doc.file_path}:`, storageError.message);
     }
 
     const { error: chunksError } = await service
@@ -97,8 +94,7 @@ serve(async (req) => {
     const { error: deleteError } = await service
       .from("documents")
       .delete()
-      .eq("id", documentId)
-      .eq("user_id", user.id);
+      .eq("id", documentId);
 
     if (deleteError) {
       return new Response(JSON.stringify({ error: `Document delete failed: ${deleteError.message}` }), {

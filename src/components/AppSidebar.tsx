@@ -2,10 +2,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   FolderLock,
-  Database,
-  BarChart3,
   Settings,
-  Users,
   LogOut,
   Cpu,
   ChevronRight,
@@ -31,8 +28,6 @@ const mainNav = [
   { title: "Дашборд", url: "/", icon: LayoutDashboard },
   { title: "AI Чат", url: "/chat", icon: MessageSquare },
   { title: "Сховище документів", url: "/vault", icon: FolderLock },
-  { title: "База знань", url: "/knowledge", icon: Database },
-  { title: "Аналітика", url: "/analytics", icon: BarChart3 },
 ];
 
 const adminNav = [
@@ -57,8 +52,8 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-border/40">
       {/* Logo */}
-      <SidebarHeader className="px-4 py-5 border-b border-border/40">
-        <div className="flex items-center gap-3 min-w-0">
+      <SidebarHeader className={`py-5 border-b border-border/40 ${collapsed ? "px-0" : "px-4"}`}>
+        <div className={`flex items-center min-w-0 ${collapsed ? "justify-center" : "gap-3"}`}>
           <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-indigo-500 flex items-center justify-center cyan-glow">
             <Cpu className="w-4 h-4 text-white" />
           </div>
@@ -87,7 +82,8 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/"}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 mx-2
+                      className={`flex items-center rounded-lg text-sm font-medium transition-all duration-200
+                        ${collapsed ? "justify-center py-2 w-full" : "gap-3 px-3 py-2 mx-2"}
                         ${isActive(item.url)
                           ? "bg-primary/15 text-primary border border-primary/20 cyan-glow"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -120,7 +116,8 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild tooltip={collapsed ? item.title : undefined}>
                     <NavLink
                       to={item.url}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 mx-2
+                      className={`flex items-center rounded-lg text-sm font-medium transition-all duration-200
+                        ${collapsed ? "justify-center py-2 w-full" : "gap-3 px-3 py-2 mx-2"}
                         ${isActive(item.url)
                           ? "bg-secondary/15 text-secondary border border-secondary/20 indigo-glow"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -147,7 +144,8 @@ export function AppSidebar() {
             <SidebarMenuButton asChild tooltip={collapsed ? "Профіль" : undefined}>
               <NavLink
                 to="/profile"
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                className={`flex items-center rounded-lg text-sm font-medium transition-all duration-200
+                  ${collapsed ? "justify-center py-2 w-full" : "gap-3 px-3 py-2"}
                   ${isActive("/profile")
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -169,7 +167,7 @@ export function AppSidebar() {
             <SidebarMenuButton asChild tooltip={collapsed ? "Вийти" : undefined}>
               <button
                 onClick={signOut}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
+                className={`w-full flex items-center rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 ${collapsed ? "justify-center py-2" : "gap-3 px-3 py-2"}`}
               >
                 <LogOut className="w-4 h-4 flex-shrink-0" />
                 {!collapsed && <span>Вийти</span>}

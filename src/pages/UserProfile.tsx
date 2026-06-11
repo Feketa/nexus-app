@@ -29,12 +29,12 @@ export default function UserProfile() {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ display_name: name })
-      .eq("user_id", user.id);
+    const [{ error: dbError }, { error: authError }] = await Promise.all([
+      supabase.from("profiles").update({ display_name: name }).eq("user_id", user.id),
+      supabase.auth.updateUser({ data: { display_name: name } }),
+    ]);
 
-    if (error) toast.error("Помилка збереження: " + error.message);
+    if (dbError || authError) toast.error("Помилка збереження: " + (dbError?.message || authError?.message));
     else toast.success("Профіль збережено!");
     setSaving(false);
   };

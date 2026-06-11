@@ -1,7 +1,5 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ChatSearch } from "@/components/ChatSearch";
 import { useLocation } from "react-router-dom";
 
@@ -26,10 +24,6 @@ export function Layout({ children }: LayoutProps) {
                 <ChatSearch />
               </div>
               <div className="ml-auto flex items-center gap-2">
-                <Button variant="ghost" size="icon" className="h-8 w-8 relative text-muted-foreground hover:text-foreground">
-                  <Bell className="w-4 h-4" />
-                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary" />
-                </Button>
                 <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-indigo-500 flex items-center justify-center">
                   <span className="text-[10px] font-bold text-white">АД</span>
                 </div>

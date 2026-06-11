@@ -10,8 +10,6 @@ import { Layout } from "@/components/Layout";
 import Dashboard from "./pages/Dashboard";
 import AIChat from "./pages/AIChat";
 import DocumentVault from "./pages/DocumentVault";
-import KnowledgeBase from "./pages/KnowledgeBase";
-import Analytics from "./pages/Analytics";
 import AdminSettings from "./pages/AdminSettings";
 import UserManagement from "./pages/UserManagement";
 import UserProfile from "./pages/UserProfile";
@@ -44,8 +42,6 @@ const App = () => (
               <Route path="/" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
               <Route path="/chat" element={<ProtectedLayout><AIChat /></ProtectedLayout>} />
               <Route path="/vault" element={<ProtectedLayout><DocumentVault /></ProtectedLayout>} />
-              <Route path="/knowledge" element={<ProtectedLayout><KnowledgeBase /></ProtectedLayout>} />
-              <Route path="/analytics" element={<ProtectedLayout><Analytics /></ProtectedLayout>} />
               <Route path="/settings" element={<ProtectedLayout><AdminSettings /></ProtectedLayout>} />
               <Route path="/users" element={<ProtectedLayout><UserManagement /></ProtectedLayout>} />
               <Route path="/profile" element={<ProtectedLayout><UserProfile /></ProtectedLayout>} />
